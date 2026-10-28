@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampShield — Evidence-Based Campus Maintenance & Complaint Tracking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <!-- Minimal clean favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- Top Live Ticker -->
+  <div class="top-ticker" id="top-ticker">
+    <div class="ticker-left">
+      <div class="ticker-status-badge">
+        <span class="pulsing-dot"></span>
+        <span>PostgreSQL 17 Operational</span>
+      </div>
+      <div class="ticker-item">
+        <span class="label">Live Complaints:</span>
+        <span class="val" id="ticker-total">--</span>
+      </div>
+      <div class="ticker-item">
+        <span class="label">Resolution Rate:</span>
+        <span class="val" id="ticker-rate">--%</span>
+      </div>
+      <div class="ticker-item">
+        <span class="label">SLA Compliance:</span>
+        <span class="val" id="ticker-sla">--%</span>
+      </div>
+      <div class="ticker-item">
+        <span class="label">Active Technicians:</span>
+        <span class="val" id="ticker-techs">--</span>
+      </div>
+    </div>
+    <div class="ticker-right">
+      <span style="color: #94a3b8; font-size: 0.75rem;">Cryptographic Proof-of-Work (PoW) Protocol Active</span>
+    </div>
+  </div>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="#" class="brand-logo" onclick="app.navigate('landing'); return false;">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-text">
+          <h1>CampShield</h1>
+          <p>Verified Campus Redressal</p>
+        </div>
+      </a>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="main-nav-tabs">
+        <button class="nav-tab-btn active" data-view="landing" onclick="app.navigate('landing')">
+          <span>🏛️</span> Overview
+        </button>
+        <button class="nav-tab-btn" data-view="tracker" onclick="app.navigate('tracker')">
+          <span>📋</span> Public Redressal Board
+        </button>
+        <button class="nav-tab-btn" data-view="intake" onclick="app.navigate('intake')">
+          <span>➕</span> Report Grievance
+        </button>
+        <button class="nav-tab-btn" data-view="my-tickets" id="tab-my-tickets" onclick="app.navigate('my-tickets')">
+          <span>📌</span> My Grievances
+        </button>
+        <button class="nav-tab-btn" data-view="technician" id="tab-technician" onclick="app.navigate('technician')">
+          <span>🔧</span> Tech Workbench
+        </button>
+        <button class="nav-tab-btn" data-view="operations" id="tab-operations" onclick="app.navigate('operations')">
+          <span>⚖️</span> Operations & Appeals
+        </button>
+        <button class="nav-tab-btn" data-view="analytics" onclick="app.navigate('analytics')">
+          <span>📊</span> Repeat-Issue Analytics
+        </button>
+      </nav>
+
+      <!-- Role Switcher & User Profile -->
+      <div class="header-actions">
+        <div class="role-switcher-container" title="Instant Demo Persona Switcher">
+          <span class="role-switcher-label">Demo Role:</span>
+          <select id="role-selector" class="role-selector" onchange="app.switchDemoRole(this.value)">
+            <option value="visitor">Visitor (Public Guest)</option>
+            <option value="11111111-1111-1111-1111-111111111101">Student (Aarav Sharma)</option>
+            <option value="11111111-1111-1111-1111-111111111103">Faculty (Dr. Suresh Menon)</option>
+            <option value="22222222-2222-2222-2222-222222222201">Technician (Rajesh - Electrical)</option>
+            <option value="33333333-3333-3333-3333-333333333301">Dept Head (Dr. Priya Nair)</option>
+            <option value="44444444-4444-4444-4444-444444444401">Admin (Prof. Vikramaditya)</option>
+          </select>
+        </div>
+
+        <button class="btn btn-outline btn-sm" id="btn-auth-action" onclick="app.openAuthModal()">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-main">
+
+    <!-- 1. LANDING PAGE VIEW -->
+    <section id="view-landing" class="app-view active">
+      <div class="landing-hero">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-badge">
+              <span>⚡ Institutional Integrity Engine</span>
+            </div>
+            <h2 class="hero-title">
+              Evidence-Based <span class="highlight">Campus Maintenance</span> & Redressal
+            </h2>
+            <p class="hero-description">
+              Eliminating fragmented complaints, invisible repairs, and repeated infrastructure failures with tamper-proof cryptographic hashing, geo-fenced verification, and SLA escalation tracking.
+            </p>
+            <div class="hero-cta-group">
+              <button class="btn btn-accent" onclick="app.navigate('intake')">
+                <span>➕</span> Report an Issue Now
+              </button>
+              <button class="btn btn-primary" onclick="app.navigate('tracker')">
+                <span>🔍</span> Browse Active Redressals
+              </button>
+            </div>
+          </div>
+
+          <!-- Public Ticket Lookup Card -->
+          <div class="hero-search-card">
+            <h3>Quick Ticket Tracker</h3>
+            <p>Enter any ticket reference number to inspect verifiable proof-of-work and timeline:</p>
+            <form class="public-track-form" onsubmit="app.trackTicketFromHero(event)">
+              <input type="text" id="hero-track-input" placeholder="e.g. CMP-2026-00101" required>
+              <button type="submit" class="btn btn-primary">Track</button>
+            </form>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: #64748b;">
+              Try demo tickets: <a href="#" onclick="app.openTicketDetail('CMP-2026-00101'); return false;" style="font-weight: 600;">CMP-2026-00101</a>, <a href="#" onclick="app.openTicketDetail('CMP-2026-00104'); return false;" style="font-weight: 600;">CMP-2026-00104</a>, or <a href="#" onclick="app.openTicketDetail('CMP-2026-00105'); return false;" style="font-weight: 600;">CMP-2026-00105</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Campus Performance Indicators -->
+      <div class="stats-cards-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📑</div>
+          <div class="stat-content">
+            <h4>Total Grievances</h4>
+            <div class="stat-val" id="stat-total">--</div>
+            <div class="stat-sub">Across 6 maintenance divisions</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-content">
+            <h4>Mean Time to Resolve</h4>
+            <div class="stat-val" id="stat-mttr">-- hrs</div>
+            <div class="stat-sub">Average repair turnaround</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🛡️</div>
+          <div class="stat-content">
+            <h4>SLA Adherence</h4>
+            <div class="stat-val" id="stat-sla-pct">--%</div>
+            <div class="stat-sub">P1 to P4 compliance</div>
+          </div>
+        </div>
+
+        <div class="stat-card alert">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-content">
+            <h4>SLA Breaches / Escalations</h4>
+            <div class="stat-val" id="stat-escalated">--</div>
+            <div class="stat-sub">Prioritized for Directorate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Verifiability Features -->
+      <div class="features-section">
+        <div class="section-header">
+          <h2>Core Verification Pillars</h2>
+          <p>Built to address the 4 failure modes of conventional campus complaint systems</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-box">
+            <span class="feature-badge green">Cryptographic Assurance</span>
+            <h3>Tamper-Proof Resolution Proof</h3>
+            <p>Every technician closure requires before & after visual evidence signed with SHA-256 hashes, device EXIF timestamps, and geo-fence radius matching.</p>
+          </div>
+
+          <div class="feature-box">
+            <span class="feature-badge orange">Duplicate Intelligence</span>
+            <h3>Real-Time Duplicate Radar</h3>
+            <p>Intake suggestions scan active complaints in the same block, room, or asset tag with text similarity scoring, preventing duplicate ticket clutter.</p>
+          </div>
+
+          <div class="feature-box">
+            <span class="feature-badge blue">SLA Governance</span>
+            <h3>Automated Escalation Engine</h3>
+            <p>Strict priority countdowns (P1: 2h, P2: 8h, P3: 24h, P4: 72h) trigger automatic alerts and escalation badges when deadlines are breached.</p>
+          </div>
+
+          <div class="feature-box">
+            <span class="feature-badge purple">Student Accountability</span>
+            <h3>Dispute & Appeal Mechanism</h3>
+            <p>If a technician claims resolution but the water still leaks or AC fails, the complainant can file a formal dispute that forces review by the Department Head.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PUBLIC REDRESSAL BOARD (EXPLORER) -->
+    <section id="view-tracker" class="app-view">
+      <div class="section-header">
+        <h2>Campus Infrastructure Redressal Board</h2>
+        <p>Real-time transparent register of all reported campus maintenance tasks</p>
+      </div>
+
+      <!-- Multi-Facet Filters -->
+      <div class="filter-panel">
+        <div class="filter-row">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="filter-search" placeholder="Search by Ticket ID, asset tag, room, or title..." oninput="app.debounceSearch()">
+          </div>
+
+          <select id="filter-status" class="filter-select" onchange="app.loadComplaints()">
+            <option value="ALL">All Statuses</option>
+            <option value="SUBMITTED">Submitted</option>
+            <option value="ASSIGNED">Assigned</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="RESOLVED">Resolved (Proof Attached)</option>
+            <option value="DISPUTED">Disputed</option>
+            <option value="CLOSED">Closed (Rated)</option>
+          </select>
+
+          <select id="filter-priority" class="filter-select" onchange="app.loadComplaints()">
+            <option value="ALL">All Priorities</option>
+            <option value="P1_CRITICAL">P1 Critical (2h SLA)</option>
+            <option value="P2_HIGH">P2 High (8h SLA)</option>
+            <option value="P3_MEDIUM">P3 Medium (24h SLA)</option>
+            <option value="P4_ROUTINE">P4 Routine (72h SLA)</option>
+          </select>
+
+          <select id="filter-department" class="filter-select" onchange="app.loadComplaints()">
+            <option value="ALL">All Departments</option>
+          </select>
+
+          <select id="filter-zone" class="filter-select" onchange="app.loadComplaints()">
+            <option value="ALL">All Campus Zones</option>
+          </select>
+
+          <button id="btn-escalated-filter" class="escalated-toggle-btn" onclick="app.toggleEscalatedFilter()">
+            <span>⚠️</span> Escalated Only
+          </button>
+
+          <select id="filter-sort" class="filter-select" onchange="app.loadComplaints()">
+            <option value="newest">Sort: Newest First</option>
+            <option value="sla_urgency">Sort: SLA Urgency</option>
+            <option value="priority">Sort: Priority Level</option>
+            <option value="upvotes">Sort: Most Endorsed</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Complaints Grid -->
+      <div id="complaints-container" class="complaints-grid">
+        <!-- Rendered by JS -->
+      </div>
+      <div id="complaints-empty" style="display: none; text-align: center; padding: 3rem 1rem; color: #64748b;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🍃</div>
+        <h3>No matching complaints found</h3>
+        <p>Try clearing your search query or adjusting filter parameters.</p>
+      </div>
+    </section>
+
+    <!-- 3. INTAKE / GRIEVANCE SUBMISSION WITH DUPLICATE RADAR -->
+    <section id="view-intake" class="app-view">
+      <div class="section-header">
+        <h2>Report Campus Infrastructure Grievance</h2>
+        <p>File a verified maintenance ticket with automated duplicate checking and geo-tagged evidence</p>
+      </div>
+
+      <div class="intake-layout">
+        <!-- Left: Intake Form -->
+        <div class="intake-card">
+          <form id="intake-form" onsubmit="app.submitGrievance(event)">
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Campus Zone / Building <span class="req">*</span></label>
+                <select id="intake-zone" class="form-control" required onchange="app.onZoneOrDeptChange()">
+                  <option value="">Select Zone...</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Maintenance Division <span class="req">*</span></label>
+                <select id="intake-dept" class="form-control" required onchange="app.onZoneOrDeptChange()">
+                  <option value="">Select Department...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Specific Asset / QR Tag (Optional)</label>
+              <select id="intake-asset" class="form-control" onchange="app.onAssetChange()">
+                <option value="">Select an asset or specify room below...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Issue Title <span class="req">*</span></label>
+              <input type="text" id="intake-title" class="form-control" placeholder="e.g. Water fountain leaking heavily on Ground Floor" required oninput="app.debounceDuplicateCheck()">
+            </div>
+
+            <!-- DUPLICATE RADAR BANNER (Real-time proactive suggestions) -->
+            <div id="duplicate-radar" class="duplicate-radar-panel">
+              <div class="radar-header">
+                <span>⚠️</span> <span id="radar-heading">Potential Duplicate Complaints Detected</span>
+              </div>
+              <p style="font-size: 0.8rem; color: #78350f;">
+                We found open complaints in this exact location. If your issue is already listed below, you can endorse it (+1) instead of submitting a duplicate ticket:
+              </p>
+              <div id="duplicate-suggestions-list">
+                <!-- Injected by JS -->
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Severity & Priority <span class="req">*</span></label>
+              <select id="intake-priority" class="form-control" required>
+                <option value="P1_CRITICAL">P1 Critical — Safety hazards, total outages (SLA: 2 hours)</option>
+                <option value="P2_HIGH">P2 High — Class / Lab blocker, pipe burst (SLA: 8 hours)</option>
+                <option value="P3_MEDIUM" selected>P3 Medium — Standard lighting, AC, furniture (SLA: 24 hours)</option>
+                <option value="P4_ROUTINE">P4 Routine — Cosmetic, preventive touch-ups (SLA: 72 hours)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Detailed Description <span class="req">*</span></label>
+              <textarea id="intake-desc" class="form-control" rows="4" placeholder="Describe the physical condition, room number, affected students, and any safety hazards..." required oninput="app.debounceDuplicateCheck()"></textarea>
+            </div>
+
+            <!-- Photographic Evidence Upload -->
+            <div class="form-group">
+              <label class="form-label">Initial Incident Photo Evidence</label>
+              <div class="file-dropzone" onclick="document.getElementById('intake-file').click()">
+                <div style="font-size: 1.8rem; margin-bottom: 4px;">📸</div>
+                <div style="font-weight: 600; color: var(--primary-800);">Click or drop photo here</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Cryptographic SHA-256 hash & location coordinates will be calculated on upload</div>
+                <input type="file" id="intake-file" accept="image/*" style="display: none;" onchange="app.handleFileSelect(this)">
+              </div>
+              <div id="intake-file-info" class="file-preview-info" style="display: none;">
+                <span id="intake-file-name" style="font-weight: 600;">--</span>
+                <span id="intake-file-hash" style="color: var(--primary-700); font-family: var(--font-mono); font-size: 0.72rem;"></span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+              <button type="submit" class="btn btn-primary" id="btn-submit-intake" style="flex: 1;">
+                Submit Grievance with Verifiable Evidence
+              </button>
+              <button type="button" class="btn btn-outline" onclick="app.resetIntakeForm()">
+                Reset
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Right: Verification Guidelines & Live Location Card -->
+        <div>
+          <div class="location-info-card" style="margin-bottom: 1.5rem;">
+            <h4>📍 Geo-Fence Integrity Check</h4>
+            <p>
+              Evidence photos are cryptographically compared against the designated building coordinates:
+            </p>
+            <div id="zone-geo-meta" style="font-size: 0.82rem; color: #1e293b; background: white; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              Select a campus zone to inspect coordinates and allowable geo-fence tolerance radius.
+            </div>
+          </div>
+
+          <div class="location-info-card">
+            <h4>🛡️ The CampShield Redressal Guarantee</h4>
+            <ul style="font-size: 0.82rem; color: var(--text-muted); padding-left: 1.2rem; line-height: 1.6;">
+              <li><strong>Zero Ghost Closures</strong>: Technicians cannot mark a ticket resolved without verifiable after-fix proof.</li>
+              <li><strong>Complainant Right of Appeal</strong>: If a repair is inadequate, click "Dispute" to force a departmental inspection.</li>
+              <li><strong>Public Auditability</strong>: All maintenance logs, replacement parts, and labor durations remain permanent records.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MY GRIEVANCES VIEW -->
+    <section id="view-my-tickets" class="app-view">
+      <div class="section-header">
+        <h2>My Submitted Grievances</h2>
+        <p>Track your reported issues, provide feedback upon repair, or appeal inadequate closures</p>
+      </div>
+
+      <div id="my-tickets-container" class="complaints-grid">
+        <!-- Injected by JS -->
+      </div>
+      <div id="my-tickets-empty" style="display: none; text-align: center; padding: 3rem 1rem; color: #64748b;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📋</div>
+        <h3>You have not submitted any complaints yet</h3>
+        <p>When you encounter broken campus facilities, use the "Report Grievance" tab to file an issue.</p>
+        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="app.navigate('intake')">Report an Issue</button>
+      </div>
+    </section>
+
+    <!-- 5. TECHNICIAN WORKBENCH -->
+    <section id="view-technician" class="app-view">
+      <div class="section-header">
+        <h2>Technician Operational Workbench</h2>
+        <p>Field repair dispatch queue with proof-of-work (PoW) resolution submission</p>
+      </div>
+
+      <div class="filter-panel" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary-900);">
+            Technician Active Dispatch Queue: <span id="tech-queue-count" style="color: var(--accent-orange);">0</span> Tasks
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="app.loadTechnicianQueue()">🔄 Refresh Queue</button>
+        </div>
+      </div>
+
+      <div id="technician-queue-container" class="complaints-grid">
+        <!-- Injected by JS -->
+      </div>
+      <div id="technician-queue-empty" style="display: none; text-align: center; padding: 3rem 1rem; color: #64748b;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎉</div>
+        <h3>No outstanding repair tickets in your queue!</h3>
+        <p>All assigned maintenance work has been completed and verified.</p>
+      </div>
+    </section>
+
+    <!-- 6. OPERATIONS & DISPUTES (DEPARTMENT HEAD / ADMIN) -->
+    <section id="view-operations" class="app-view">
+      <div class="section-header">
+        <h2>Directorate Operations & Student Appeals</h2>
+        <p>Triage unassigned tickets, reallocate technicians, and adjudicate student dispute appeals</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Dispute Appeals Column -->
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-900); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+            <span>⚖️</span> Student Appeals & Disputes (<span id="disputes-count">0</span>)
+          </h3>
+          <div id="disputes-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Unassigned / Triage Column -->
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-900); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+            <span>📥</span> Unassigned Ticket Triage (<span id="triage-count">0</span>)
+          </h3>
+          <div id="triage-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. REPEAT-ISSUE & SLA ANALYTICS -->
+    <section id="view-analytics" class="app-view">
+      <div class="section-header">
+        <h2>Institutional Maintenance Analytics</h2>
+        <p>Recurring fault patterns, chronic asset bottlenecks, and department MTTR compliance</p>
+      </div>
+
+      <!-- Repeat Equipment Hotspots -->
+      <div class="analytics-card" style="margin-bottom: 1.5rem;">
+        <h3>
+          <span>🔁 Chronic Repeat-Issue Equipment (Multi-Fault Assets)</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Flagged for permanent structural overhaul</span>
+        </h3>
+        <div style="overflow-x: auto;">
+          <table class="data-table" id="table-repeat-assets">
+            <thead>
+              <tr>
+                <th>Asset Tag</th>
+                <th>Equipment Name</th>
+                <th>Zone / Room</th>
+                <th>Division</th>
+                <th>Fault Count</th>
+                <th>Latest Incident</th>
+                <th>Ticket Sequence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <!-- Department MTTR & SLA Compliance -->
+        <div class="analytics-card">
+          <h3>Division Workload & MTTR Comparison</h3>
+          <div id="department-bars-container">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Zone Vulnerability Breakdown -->
+        <div class="analytics-card">
+          <h3>Campus Zone Vulnerability Index</h3>
+          <div id="zone-hotspots-container">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence Cryptographic Audit Summary -->
+      <div class="analytics-card" style="margin-top: 1.5rem;">
+        <h3>🛡️ Cryptographic Proof-of-Work (PoW) Audit Status</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background: var(--surface-ivory); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Total Audited Evidences</div>
+            <div id="audit-total-ev" style="font-size: 1.6rem; font-weight: 800; color: var(--primary-900);">--</div>
+          </div>
+          <div style="background: #f0fdf4; padding: 1rem; border-radius: var(--radius-md); border: 1px solid #bbf7d0;">
+            <div style="font-size: 0.78rem; color: #166534;">Geo-Fence Radius Matches</div>
+            <div id="audit-geofence-ok" style="font-size: 1.6rem; font-weight: 800; color: #166534;">--</div>
+          </div>
+          <div style="background: #eff6ff; padding: 1rem; border-radius: var(--radius-md); border: 1px solid #bfdbfe;">
+            <div style="font-size: 0.78rem; color: #1e40af;">EXIF Timestamps Verified</div>
+            <div id="audit-exif-ok" style="font-size: 1.6rem; font-weight: 800; color: #1e40af;">--</div>
+          </div>
+          <div style="background: #fef2f2; padding: 1rem; border-radius: var(--radius-md); border: 1px solid #fecaca;">
+            <div style="font-size: 0.78rem; color: #991b1b;">Tamper Alerts / Flags</div>
+            <div id="audit-tamper-count" style="font-size: 1.6rem; font-weight: 800; color: #991b1b;">0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODALS & DIALOGS
+       ========================================================================= -->
+
+  <!-- 1. TICKET INSPECTION & EVIDENCE DETAIL MODAL -->
+  <div id="modal-ticket-detail" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-detail-title">Ticket CMP-2026-XXXXX</h3>
+          <div id="modal-detail-meta" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;"></div>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeModal('modal-ticket-detail')">&times;</button>
+      </div>
+
+      <div class="modal-body" id="modal-detail-body">
+        <!-- Injected dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TECHNICIAN RESOLUTION PROOF-OF-WORK MODAL -->
+  <div id="modal-resolve" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h3>Submit Resolution Proof-of-Work</h3>
+          <p id="resolve-modal-ticket-num" style="font-size: 0.8rem; color: var(--text-muted);"></p>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeModal('modal-resolve')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="resolve-form" onsubmit="app.submitResolutionProof(event)">
+          <input type="hidden" id="resolve-ticket-id">
+
+          <div class="form-group">
+            <label class="form-label">Repair Action Performed <span class="req">*</span></label>
+            <textarea id="resolve-action" class="form-control" rows="3" placeholder="Describe the physical repair, adjustment, or replacement executed..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Materials & Spare Parts Used</label>
+            <input type="text" id="resolve-materials" class="form-control" placeholder="e.g. 1.25 inch CPVC brass ball valve, Teflon tape">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Labor Duration (Minutes)</label>
+            <input type="number" id="resolve-time" class="form-control" min="5" max="600" value="45">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Proof-of-Work Photo Evidence (After-Fix) <span class="req">*</span></label>
+            <div class="file-dropzone" onclick="document.getElementById('resolve-file').click()">
+              <div style="font-size: 1.5rem;">📸</div>
+              <div style="font-size: 0.85rem; font-weight: 600;">Upload After-Fix Photograph</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Will be cryptographically signed with SHA-256 for audit verifiability</div>
+              <input type="file" id="resolve-file" accept="image/*" style="display: none;" onchange="app.handleResolveFileSelect(this)">
+            </div>
+            <div id="resolve-file-name" style="margin-top: 6px; font-size: 0.8rem; font-weight: 600; color: var(--primary-700); display: none;"></div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">
+              Sign & Certify Resolution
+            </button>
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-resolve')">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. STUDENT DISPUTE APPEAL MODAL -->
+  <div id="modal-dispute" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 550px;">
+      <div class="modal-header">
+        <div>
+          <h3>File Grievance Appeal / Dispute</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">If repair was inadequate, premature, or problem persists</p>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeModal('modal-dispute')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="dispute-form" onsubmit="app.submitDispute(event)">
+          <input type="hidden" id="dispute-ticket-id">
+
+          <div class="form-group">
+            <label class="form-label">Reason for Disputing Resolution <span class="req">*</span></label>
+            <textarea id="dispute-reason" class="form-control" rows="4" placeholder="Explain why the resolution was false or incomplete (e.g. 'Technician claimed valve replaced, but water is still spraying onto corridor')..." required minlength="10"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-accent" style="flex: 1;">
+              Submit Dispute to Directorate
+            </button>
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-dispute')">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. RATING & FEEDBACK MODAL -->
+  <div id="modal-feedback" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <div>
+          <h3>Redressal Feedback & Rating</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Confirm repair and formally close ticket</p>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeModal('modal-feedback')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="feedback-form" onsubmit="app.submitFeedback(event)">
+          <input type="hidden" id="feedback-ticket-id">
+
+          <div class="form-group">
+            <label class="form-label">Resolution Satisfaction Rating <span class="req">*</span></label>
+            <div style="display: flex; gap: 10px; font-size: 1.5rem; margin: 8px 0;" id="star-rating-container">
+              <span class="star-btn" data-val="1" onclick="app.setRating(1)" style="cursor: pointer;">⭐</span>
+              <span class="star-btn" data-val="2" onclick="app.setRating(2)" style="cursor: pointer;">⭐</span>
+              <span class="star-btn" data-val="3" onclick="app.setRating(3)" style="cursor: pointer;">⭐</span>
+              <span class="star-btn" data-val="4" onclick="app.setRating(4)" style="cursor: pointer;">⭐</span>
+              <span class="star-btn" data-val="5" onclick="app.setRating(5)" style="cursor: pointer;">⭐</span>
+            </div>
+            <input type="hidden" id="feedback-rating-val" value="5">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Feedback Notes (Optional)</label>
+            <textarea id="feedback-notes" class="form-control" rows="3" placeholder="Commend the technician's speed or mention any lingering observations..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">
+              Submit & Close Grievance
+            </button>
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-feedback')">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. AUTH / LOGIN MODAL -->
+  <div id="modal-auth" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="auth-modal-title">Campus Sign In</h3>
+        <button class="modal-close-btn" onclick="app.closeModal('modal-auth')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="auth-form" onsubmit="app.handleAuthSubmit(event)">
+          <div class="form-group" id="auth-name-group" style="display: none;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="auth-name" class="form-control" placeholder="Aarav Sharma">
+          </div>
+
+          <div class="form-group" id="auth-inst-group" style="display: none;">
+            <label class="form-label">Institutional ID / Roll Number</label>
+            <input type="text" id="auth-inst-id" class="form-control" placeholder="CS-2023-042">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Campus Email</label>
+            <input type="email" id="auth-email" class="form-control" placeholder="student@campus.edu" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="auth-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%;">
+              Sign In
+            </button>
+          </div>
+
+          <div style="text-align: center; margin-top: 1rem; font-size: 0.82rem;">
+            <span id="auth-toggle-msg">Don't have an account?</span>
+            <a href="#" id="auth-toggle-link" onclick="app.toggleAuthMode(); return false;" style="font-weight: 700; margin-left: 4px;">Register as Student</a>
+          </div>
+
+          <div style="background: var(--surface-ivory); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+            💡 <strong>Evaluation Tip</strong>: You can also use the <strong>Demo Role</strong> selector in the top bar to switch instantly without typing passwords!
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div>
+        <strong>CampShield</strong> &bull; Evidence-Based Campus Maintenance and Complaint Tracking System
+      </div>
+      <div>
+        Powered by <strong>Supabase (PostgreSQL 17.11)</strong> &bull; Region: ap-south-1 (Mumbai)
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

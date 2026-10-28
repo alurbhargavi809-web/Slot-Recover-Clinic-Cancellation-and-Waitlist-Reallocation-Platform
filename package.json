@@ -1,0 +1,25 @@
+{
+  "name": "campshield-maintenance-tracker",
+  "version": "1.0.0",
+  "description": "Evidence-Based Campus Maintenance and Complaint Tracking System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "seed": "python seed_data.py",
+    "test": "node tests/api_test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.5.0",
+    "pg": "^8.23.1"
+  }
+}
