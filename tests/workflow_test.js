@@ -3,7 +3,14 @@ const { app, server } = require('../server');
 
 async function makeRequest(path, options = {}) {
   return new Promise((resolve, reject) => {
-    const port = server.address().port;
+    let port = 3000;
+    try {
+      if (server && server.address && server.address()) {
+        port = server.address().port;
+      }
+    } catch (e) {
+      port = 3000;
+    }
     const reqOptions = {
       hostname: 'localhost',
       port: port,
